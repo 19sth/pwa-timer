@@ -15,14 +15,20 @@ export default function TimerDetail() {
     const [selectedSessionIndex, setSelectedSessionIndex] = useState<number | null>(null);
     const [endTime, setEndTime] = useState('');
     const [isEndSessionDialogOpen, setIsEndSessionDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     
     const timer = useSelector((state: RootState) => 
         state.timer.timers.find((t: Timer) => t.id === parseInt(id || '0', 10))
     );
 
     const handleDelete = () => {
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
         if (timer) {
             dispatch(deleteTimer(timer.id));
+            setIsDeleteDialogOpen(false);
             navigate('/');
         }
     };
@@ -290,6 +296,20 @@ export default function TimerDetail() {
                             </div>
                         </div>
                     </DialogContent>
+                                </Dialog>
+
+                {/* Delete Confirmation Dialog */}
+                <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogContent>
+                        Are you sure you want to delete this timer? This action cannot be undone.
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleConfirmDelete} color="error" variant="contained">
+                            Delete
+                        </Button>
+                    </DialogActions>
                 </Dialog>
             </div>
         </div>
