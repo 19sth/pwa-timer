@@ -2,8 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface Session {
-  duration: number;
+  duration?: number;
   date: string;
+  startTime: string;
 }
 
 export interface Timer {

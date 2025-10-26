@@ -11,7 +11,7 @@ export default function TimerDetail() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [sessionDuration, setSessionDuration] = useState('');
+    const [startTime, setStartTime] = useState('');
     
     const timer = useSelector((state: RootState) => 
         state.timer.timers.find((t: Timer) => t.id === parseInt(id || '0', 10))
@@ -24,18 +24,38 @@ export default function TimerDetail() {
         }
     };
 
-    const handleAddSession = () => {
-        if (timer && sessionDuration) {
-            dispatch(addSession({
-                timerId: timer.id,
-                session: {
-                    duration: parseInt(sessionDuration, 10),
-                    date: new Date().toISOString()
-                }
-            }));
-            setSessionDuration('');
-            setIsDialogOpen(false);
+    const handleAddSession = (startNow: boolean = false) => {
+        if (!timer) return;
+        
+        const now = new Date();
+        let sessionStartTime: Date;
+        
+        if (startNow) {
+            sessionStartTime = now;
+        } else {
+            if (!startTime) return;
+            
+            // Parse the time string (HH:mm) and combine with today's date
+            const [hours, minutes] = startTime.split(':').map(num => parseInt(num, 10));
+            sessionStartTime = new Date();
+            sessionStartTime.setHours(hours, minutes, 0, 0);
+            
+            // If the time is earlier than now, assume it's for tomorrow
+            if (sessionStartTime < now) {
+                sessionStartTime.setDate(sessionStartTime.getDate() + 1);
+            }
         }
+
+        dispatch(addSession({
+            timerId: timer.id,
+            session: {
+                startTime: sessionStartTime.toISOString(),
+                date: new Date().toISOString()
+            }
+        }));
+        
+        setStartTime('');
+        setIsDialogOpen(false);
     };
 
     useEffect(() => {
@@ -87,11 +107,13 @@ export default function TimerDetail() {
                         {timer.sessions.map((session, index) => (
                             <div key={index} className="bg-white rounded-lg shadow p-3">
                                 <p className="text-gray-600">
-                                    Duration: {session.duration} minutes
+                                    Started: {new Date(session.startTime).toLocaleString()}
                                 </p>
-                                <p className="text-sm text-gray-400">
-                                    {new Date(session.date).toLocaleDateString()}
-                                </p>
+                                {session.duration && (
+                                    <p className="text-gray-600">
+                                        Duration: {session.duration} minutes
+                                    </p>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -100,22 +122,28 @@ export default function TimerDetail() {
                 )}
 
                 <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                    <DialogTitle>Add New Session</DialogTitle>
+                    <DialogTitle>Start New Session</DialogTitle>
                     <DialogContent>
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Duration (minutes)"
-                            type="number"
+                            label="Start Time"
+                            type="time"
                             fullWidth
-                            value={sessionDuration}
-                            onChange={(e) => setSessionDuration(e.target.value)}
+                            value={startTime}
+                            onChange={(e) => setStartTime(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
                         />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleAddSession} color="primary">
-                            Add
+                        <Button onClick={() => handleAddSession()} color="primary">
+                            Start at Selected Time
+                        </Button>
+                        <Button onClick={() => handleAddSession(true)} color="primary" variant="contained">
+                            Start Now
                         </Button>
                     </DialogActions>
                 </Dialog>
