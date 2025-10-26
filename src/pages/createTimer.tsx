@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Container } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addTimer } from '../redux/sliceTimer';
+import { ROUTE_PREFIX } from '../utils/constants';
 
 const CreateTimer: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [timerName, setTimerName] = useState('');
   const [goalMinutes, setGoalMinutes] = useState('');
 
@@ -26,9 +29,8 @@ const CreateTimer: React.FC = () => {
     // Dispatch action to add timer to Redux store
     dispatch(addTimer(timer));
 
-    // Reset form
-    setTimerName('');
-    setGoalMinutes('');
+    // Navigate to main page
+    navigate(ROUTE_PREFIX + '/');
   };
 
   return (
