@@ -8,17 +8,17 @@
   "background_color": "#fefefe",
   "icons": [
     {
-      "src": "https://dummyimage.com/16x16/fde047/000/?font=bebas&font_size=16&text=P",
+      "src": "https://dummyimage.com/16x16/fde047/000/?font=bebas&font_size=16&text=T",
       "sizes": "16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "https://dummyimage.com/192x192/fde047/000/?font=bebas&font_size=192&text=P",
+      "src": "https://dummyimage.com/192x192/fde047/000/?font=bebas&font_size=192&text=T",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "https://dummyimage.com/512x512/fde047/000/?font=bebas&font_size=512&text=P",
+      "src": "https://dummyimage.com/512x512/fde047/000/?font=bebas&font_size=512&text=T",
       "type": "image/png",
       "sizes": "512x512"
     }
