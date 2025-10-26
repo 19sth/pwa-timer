@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
-import { Timer, deleteTimer, addSession } from '../redux/sliceTimer';
+import { Timer, deleteTimer, addSession, endSession } from '../redux/sliceTimer';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 
 export default function TimerDetail() {
@@ -12,6 +12,9 @@ export default function TimerDetail() {
     const navigate = useNavigate();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [startTime, setStartTime] = useState('');
+    const [selectedSessionIndex, setSelectedSessionIndex] = useState<number | null>(null);
+    const [endTime, setEndTime] = useState('');
+    const [isEndSessionDialogOpen, setIsEndSessionDialogOpen] = useState(false);
     
     const timer = useSelector((state: RootState) => 
         state.timer.timers.find((t: Timer) => t.id === parseInt(id || '0', 10))
@@ -105,13 +108,27 @@ export default function TimerDetail() {
                 {timer.sessions && timer.sessions.length > 0 ? (
                     <div className="space-y-3">
                         {timer.sessions.map((session, index) => (
-                            <div key={index} className="bg-white rounded-lg shadow p-3">
+                            <div 
+                                key={index} 
+                                className="bg-white rounded-lg shadow p-3 cursor-pointer hover:bg-gray-50"
+                                onClick={() => {
+                                    if (!session.duration) {
+                                        setSelectedSessionIndex(index);
+                                        setIsEndSessionDialogOpen(true);
+                                    }
+                                }}
+                            >
                                 <p className="text-gray-600">
                                     Started: {new Date(session.startTime).toLocaleString()}
                                 </p>
                                 {session.duration && (
                                     <p className="text-gray-600">
                                         Duration: {session.duration} minutes
+                                    </p>
+                                )}
+                                {!session.duration && (
+                                    <p className="text-green-600">
+                                        Session in progress
                                     </p>
                                 )}
                             </div>
@@ -144,6 +161,88 @@ export default function TimerDetail() {
                         </Button>
                         <Button onClick={() => handleAddSession(true)} color="primary" variant="contained">
                             Start Now
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* End Session Dialog */}
+                <Dialog open={isEndSessionDialogOpen} onClose={() => setIsEndSessionDialogOpen(false)}>
+                    <DialogTitle>End Session</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="End Time"
+                            type="time"
+                            fullWidth
+                            value={endTime}
+                            onChange={(e) => setEndTime(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {
+                            setIsEndSessionDialogOpen(false);
+                            setEndTime('');
+                        }}>Cancel</Button>
+                        <Button onClick={() => {
+                            if (selectedSessionIndex !== null && timer) {
+                                const session = timer.sessions[selectedSessionIndex];
+                                const startTime = new Date(session.startTime);
+                                let endDateTime;
+                                
+                                if (endTime) {
+                                    // Parse the time string (HH:mm)
+                                    const [hours, minutes] = endTime.split(':').map(num => parseInt(num, 10));
+                                    endDateTime = new Date();
+                                    endDateTime.setHours(hours, minutes, 0, 0);
+                                    
+                                    // If the end time is earlier than start time, assume it's for the next day
+                                    if (endDateTime < startTime) {
+                                        endDateTime.setDate(endDateTime.getDate() + 1);
+                                    }
+                                } else {
+                                    // End now
+                                    endDateTime = new Date();
+                                }
+                                
+                                // Calculate duration in minutes
+                                const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
+                                
+                                dispatch(endSession({
+                                    timerId: timer.id,
+                                    sessionIndex: selectedSessionIndex,
+                                    duration
+                                }));
+                                
+                                setIsEndSessionDialogOpen(false);
+                                setSelectedSessionIndex(null);
+                                setEndTime('');
+                            }
+                        }} color="primary" variant="contained">
+                            End Session
+                        </Button>
+                        <Button onClick={() => {
+                            if (selectedSessionIndex !== null && timer) {
+                                const session = timer.sessions[selectedSessionIndex];
+                                const startTime = new Date(session.startTime);
+                                const endDateTime = new Date(); // End now
+                                const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
+                                
+                                dispatch(endSession({
+                                    timerId: timer.id,
+                                    sessionIndex: selectedSessionIndex,
+                                    duration
+                                }));
+                                
+                                setIsEndSessionDialogOpen(false);
+                                setSelectedSessionIndex(null);
+                                setEndTime('');
+                            }
+                        }} color="secondary">
+                            End Now
                         </Button>
                     </DialogActions>
                 </Dialog>
