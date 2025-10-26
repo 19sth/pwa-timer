@@ -27,7 +27,11 @@ export const timerSlice = createSlice({
   initialState,
   reducers: {
     addTimer: (state, action: PayloadAction<Timer>) => {
-      state.timers.push(action.payload);
+      const timer = {
+        ...action.payload,
+        sessions: action.payload.sessions || []
+      };
+      state.timers.push(timer);
     },
     deleteTimer: (state, action: PayloadAction<number>) => {
       state.timers = state.timers.filter(timer => timer.id !== action.payload);
@@ -38,9 +42,18 @@ export const timerSlice = createSlice({
         state.timers[index] = action.payload;
       }
     },
+    addSession: (state, action: PayloadAction<{ timerId: number; session: Session }>) => {
+      const timer = state.timers.find(t => t.id === action.payload.timerId);
+      if (timer) {
+        if (!timer.sessions) {
+          timer.sessions = [];
+        }
+        timer.sessions.push(action.payload.session);
+      }
+    },
   },
 });
 
-export const { addTimer, deleteTimer, updateTimer } = timerSlice.actions;
+export const { addTimer, deleteTimer, updateTimer, addSession } = timerSlice.actions;
 
 export default timerSlice.reducer;
