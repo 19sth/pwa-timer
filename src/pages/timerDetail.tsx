@@ -112,6 +112,9 @@ export default function TimerDetail() {
                 <div>
                     <h2 className="text-xl font-bold mb-2">{timer.name}</h2>
                     <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>
+                    <p className="text-gray-600">
+                        Completed: {timer.sessions.reduce((total, session) => total + (session.duration || 0), 0)} minutes
+                    </p>
                     <p className="text-sm text-gray-400">
                         Created: {new Date(timer.createdAt).toLocaleDateString()}
                     </p>
