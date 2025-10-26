@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
 import { Timer } from '../redux/sliceTimer';
 
 export default function Main() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const timers = useSelector((state: RootState) => state.timer.timers);
 
     useEffect(()=>{
@@ -30,7 +32,8 @@ export default function Main() {
                     {timers.map((timer: Timer) => (
                         <div 
                             key={timer.id} 
-                            className="bg-white rounded-lg shadow p-4 flex justify-between items-center"
+                            className="bg-white rounded-lg shadow p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+                            onClick={() => navigate(`timer/${timer.id}`)}
                         >
                             <div>
                                 <h3 className="text-lg font-semibold">{timer.name}</h3>

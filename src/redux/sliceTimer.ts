@@ -1,11 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export interface Session {
+  duration: number;
+  date: string;
+}
+
 export interface Timer {
   id: number;
   name: string;
   goalMinutes: number;
   createdAt: string;
+  sessions: Session[];
 }
 
 export interface TimerState {

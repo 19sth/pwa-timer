@@ -6,6 +6,7 @@ import MuLayout from './components/mulayout';
 import MuImportExport from './components/muimportexport';
 import { ROUTE_PREFIX } from './utils/constants';
 import CreateTimer from './pages/createTimer';
+import TimerDetail from './pages/timerDetail';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="importexport" element={<MuImportExport />} />
           <Route path="about" element={<About />} />
           <Route path="create" element={<CreateTimer />} />
+          <Route path="timer/:id" element={<TimerDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

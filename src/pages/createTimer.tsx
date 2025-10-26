@@ -19,7 +19,8 @@ const CreateTimer: React.FC = () => {
       id: Date.now(),
       name: timerName.trim(),
       goalMinutes: parseInt(goalMinutes, 10),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      sessions: []
     };
 
     // Dispatch action to add timer to Redux store
