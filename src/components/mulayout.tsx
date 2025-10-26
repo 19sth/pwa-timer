@@ -30,6 +30,7 @@ const iconsMap = {
 export interface INavItem {
   icon: string;
   link: string;
+  onClick?: () => void;
 }
 
 export interface INotifyingState {
@@ -89,7 +90,11 @@ export default function MuLayout() {
             <Box>
               {pageState.navItems.map((item: INavItem, ix: number) => {
                 const IconClass = iconsMap[item.icon] || icons.QuestionMark;
-                return (
+                return item.onClick ? (
+                  <IconButton key={`nav_button_${ix}`} onClick={item.onClick}>
+                    <IconClass className="text-black" />
+                  </IconButton>
+                ) : (
                   <Link key={`nav_button_${ix}`} to={item.link}>
                     <IconButton>
                       <IconClass className="text-black" />

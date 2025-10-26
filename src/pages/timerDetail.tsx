@@ -69,7 +69,13 @@ export default function TimerDetail() {
 
     useEffect(() => {
         dispatch(updatePageState({
-            navItems: [],
+            navItems: [
+                {
+                    icon: "Add",
+                    link: "#",
+                    onClick: () => setIsDialogOpen(true)
+                }
+            ],
             title: timer?.name || "Timer Details"
         }));
     }, [dispatch, timer]);
@@ -103,13 +109,6 @@ export default function TimerDetail() {
             <div className="mt-6">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">Sessions</h3>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setIsDialogOpen(true)}
-                    >
-                        Add Session
-                    </Button>
                 </div>
                 {timer.sessions && timer.sessions.length > 0 ? (
                     <div className="space-y-3">
