@@ -141,28 +141,55 @@ export default function TimerDetail() {
                 <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
                     <DialogTitle>Start New Session</DialogTitle>
                     <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="Start Time"
-                            type="time"
-                            fullWidth
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
+                        <div className="space-y-4">
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => handleAddSession(true)}
+                            >
+                                Start Session Now
+                            </Button>
+                            
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div className="relative flex justify-center">
+                                    <span className="bg-white px-2 text-sm text-gray-500">or start with specific time</span>
+                                </div>
+                            </div>
+
+                            <TextField
+                                margin="dense"
+                                label="Start Time"
+                                type="time"
+                                fullWidth
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            
+                            <div className="flex justify-end gap-2 mt-4">
+                                <Button onClick={() => {
+                                    setIsDialogOpen(false);
+                                    setStartTime('');
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button 
+                                    onClick={() => handleAddSession()} 
+                                    color="primary" 
+                                    variant="contained"
+                                    disabled={!startTime}
+                                >
+                                    Start with Time
+                                </Button>
+                            </div>
+                        </div>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={() => handleAddSession()} color="primary">
-                            Start at Selected Time
-                        </Button>
-                        <Button onClick={() => handleAddSession(true)} color="primary" variant="contained">
-                            Start Now
-                        </Button>
-                    </DialogActions>
                 </Dialog>
 
                 {/* End Session Dialog */}
