@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
-import { Timer, deleteTimer, addSession, endSession } from '../redux/sliceTimer';
+import { Timer, deleteTimer, addSession, endSession, clearSessions } from '../redux/sliceTimer';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 
 export default function TimerDetail() {
@@ -16,6 +16,7 @@ export default function TimerDetail() {
     const [endTime, setEndTime] = useState('');
     const [isEndSessionDialogOpen, setIsEndSessionDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isClearSessionsDialogOpen, setIsClearSessionsDialogOpen] = useState(false);
     
     const timer = useSelector((state: RootState) => 
         state.timer.timers.find((t: Timer) => t.id === parseInt(id || '0', 10))
@@ -67,6 +68,17 @@ export default function TimerDetail() {
         setIsDialogOpen(false);
     };
 
+    const handleClearSessions = () => {
+        setIsClearSessionsDialogOpen(true);
+    };
+
+    const handleConfirmClearSessions = () => {
+        if (timer) {
+            dispatch(clearSessions(timer.id));
+            setIsClearSessionsDialogOpen(false);
+        }
+    };
+
     useEffect(() => {
         dispatch(updatePageState({
             navItems: [
@@ -74,6 +86,11 @@ export default function TimerDetail() {
                     icon: "Add",
                     link: "#",
                     onClick: () => setIsDialogOpen(true)
+                },
+                {
+                    icon: "Refresh",
+                    link: "#",
+                    onClick: handleClearSessions,
                 },
                 {
                     icon: "Delete",
@@ -302,6 +319,20 @@ export default function TimerDetail() {
                         <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
                         <Button onClick={handleConfirmDelete} color="error" variant="contained">
                             Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Clear Sessions Confirmation Dialog */}
+                <Dialog open={isClearSessionsDialogOpen} onClose={() => setIsClearSessionsDialogOpen(false)}>
+                    <DialogTitle>Clear All Sessions</DialogTitle>
+                    <DialogContent>
+                        Are you sure you want to clear all sessions for this timer? This action cannot be undone.
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsClearSessionsDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleConfirmClearSessions} color="error" variant="contained">
+                            Clear All Sessions
                         </Button>
                     </DialogActions>
                 </Dialog>

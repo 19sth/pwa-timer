@@ -26,6 +26,7 @@ const iconsMap = {
   List: icons.FormatListBulleted,
   ImportExport: icons.ImportExport,
   Delete: icons.Delete,
+  Refresh: icons.Refresh,
 } as Record<string, OverridableComponent<SvgIconTypeMap<{}, "svg">>>;
 
 export interface INavItem {

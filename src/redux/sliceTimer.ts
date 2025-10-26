@@ -58,9 +58,15 @@ export const timerSlice = createSlice({
         timer.sessions.push(action.payload.session);
       }
     },
+    clearSessions: (state, action: PayloadAction<number>) => {
+      const timer = state.timers.find(t => t.id === action.payload);
+      if (timer) {
+        timer.sessions = [];
+      }
+    },
   },
 });
 
-export const { addTimer, deleteTimer, updateTimer, addSession, endSession } = timerSlice.actions;
+export const { addTimer, deleteTimer, updateTimer, addSession, endSession, clearSessions } = timerSlice.actions;
 
 export default timerSlice.reducer;
