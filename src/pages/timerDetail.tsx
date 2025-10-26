@@ -169,82 +169,100 @@ export default function TimerDetail() {
                 <Dialog open={isEndSessionDialogOpen} onClose={() => setIsEndSessionDialogOpen(false)}>
                     <DialogTitle>End Session</DialogTitle>
                     <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="End Time"
-                            type="time"
-                            fullWidth
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => {
-                            setIsEndSessionDialogOpen(false);
-                            setEndTime('');
-                        }}>Cancel</Button>
-                        <Button onClick={() => {
-                            if (selectedSessionIndex !== null && timer) {
-                                const session = timer.sessions[selectedSessionIndex];
-                                const startTime = new Date(session.startTime);
-                                let endDateTime;
-                                
-                                if (endTime) {
-                                    // Parse the time string (HH:mm)
-                                    const [hours, minutes] = endTime.split(':').map(num => parseInt(num, 10));
-                                    endDateTime = new Date();
-                                    endDateTime.setHours(hours, minutes, 0, 0);
-                                    
-                                    // If the end time is earlier than start time, assume it's for the next day
-                                    if (endDateTime < startTime) {
-                                        endDateTime.setDate(endDateTime.getDate() + 1);
+                        <div className="space-y-4">
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                    if (selectedSessionIndex !== null && timer) {
+                                        const session = timer.sessions[selectedSessionIndex];
+                                        const startTime = new Date(session.startTime);
+                                        const endDateTime = new Date(); // End now
+                                        const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
+                                        
+                                        dispatch(endSession({
+                                            timerId: timer.id,
+                                            sessionIndex: selectedSessionIndex,
+                                            duration
+                                        }));
+                                        
+                                        setIsEndSessionDialogOpen(false);
+                                        setSelectedSessionIndex(null);
+                                        setEndTime('');
                                     }
-                                } else {
-                                    // End now
-                                    endDateTime = new Date();
-                                }
-                                
-                                // Calculate duration in minutes
-                                const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
-                                
-                                dispatch(endSession({
-                                    timerId: timer.id,
-                                    sessionIndex: selectedSessionIndex,
-                                    duration
-                                }));
-                                
-                                setIsEndSessionDialogOpen(false);
-                                setSelectedSessionIndex(null);
-                                setEndTime('');
-                            }
-                        }} color="primary" variant="contained">
-                            End Session
-                        </Button>
-                        <Button onClick={() => {
-                            if (selectedSessionIndex !== null && timer) {
-                                const session = timer.sessions[selectedSessionIndex];
-                                const startTime = new Date(session.startTime);
-                                const endDateTime = new Date(); // End now
-                                const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
-                                
-                                dispatch(endSession({
-                                    timerId: timer.id,
-                                    sessionIndex: selectedSessionIndex,
-                                    duration
-                                }));
-                                
-                                setIsEndSessionDialogOpen(false);
-                                setSelectedSessionIndex(null);
-                                setEndTime('');
-                            }
-                        }} color="secondary">
-                            End Now
-                        </Button>
-                    </DialogActions>
+                                }}
+                            >
+                                End Session Now
+                            </Button>
+                            
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div className="relative flex justify-center">
+                                    <span className="bg-white px-2 text-sm text-gray-500">or end with specific time</span>
+                                </div>
+                            </div>
+
+                            <TextField
+                                margin="dense"
+                                label="End Time"
+                                type="time"
+                                fullWidth
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            
+                            <div className="flex justify-end gap-2 mt-4">
+                                <Button onClick={() => {
+                                    setIsEndSessionDialogOpen(false);
+                                    setEndTime('');
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button 
+                                    onClick={() => {
+                                        if (selectedSessionIndex !== null && timer && endTime) {
+                                            const session = timer.sessions[selectedSessionIndex];
+                                            const startTime = new Date(session.startTime);
+                                            
+                                            // Parse the time string (HH:mm)
+                                            const [hours, minutes] = endTime.split(':').map(num => parseInt(num, 10));
+                                            const endDateTime = new Date();
+                                            endDateTime.setHours(hours, minutes, 0, 0);
+                                            
+                                            // If the end time is earlier than start time, assume it's for the next day
+                                            if (endDateTime < startTime) {
+                                                endDateTime.setDate(endDateTime.getDate() + 1);
+                                            }
+                                            
+                                            // Calculate duration in minutes
+                                            const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
+                                            
+                                            dispatch(endSession({
+                                                timerId: timer.id,
+                                                sessionIndex: selectedSessionIndex,
+                                                duration
+                                            }));
+                                            
+                                            setIsEndSessionDialogOpen(false);
+                                            setSelectedSessionIndex(null);
+                                            setEndTime('');
+                                        }
+                                    }} 
+                                    color="primary" 
+                                    variant="contained"
+                                    disabled={!endTime}
+                                >
+                                    End with Time
+                                </Button>
+                            </div>
+                        </div>
+                    </DialogContent>
                 </Dialog>
             </div>
         </div>
