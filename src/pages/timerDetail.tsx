@@ -74,6 +74,11 @@ export default function TimerDetail() {
                     icon: "Add",
                     link: "#",
                     onClick: () => setIsDialogOpen(true)
+                },
+                {
+                    icon: "Delete",
+                    link: "#",
+                    onClick: handleDelete,
                 }
             ],
             title: timer?.name || "Timer Details"
@@ -87,22 +92,12 @@ export default function TimerDetail() {
     return (
         <div className="p-4">
             <div className="bg-white rounded-lg shadow p-4 mb-4">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h2 className="text-xl font-bold mb-2">{timer.name}</h2>
-                        <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>
-                        <p className="text-sm text-gray-400">
-                            Created: {new Date(timer.createdAt).toLocaleDateString()}
-                        </p>
-                    </div>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={handleDelete}
-                        className="mt-2"
-                    >
-                        Delete Timer
-                    </Button>
+                <div>
+                    <h2 className="text-xl font-bold mb-2">{timer.name}</h2>
+                    <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>
+                    <p className="text-sm text-gray-400">
+                        Created: {new Date(timer.createdAt).toLocaleDateString()}
+                    </p>
                 </div>
             </div>
 

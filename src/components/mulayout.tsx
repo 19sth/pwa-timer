@@ -25,6 +25,7 @@ const iconsMap = {
   Add: icons.AddCircle,
   List: icons.FormatListBulleted,
   ImportExport: icons.ImportExport,
+  Delete: icons.Delete,
 } as Record<string, OverridableComponent<SvgIconTypeMap<{}, "svg">>>;
 
 export interface INavItem {
