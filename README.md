@@ -1,1 +1,7 @@
-# pwa-timer
+# PwaTimer
+
+```
+$ npm install
+$ npm start
+$ npm run build
+```
