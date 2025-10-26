@@ -4,23 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
 import { Timer, Session } from '../redux/sliceTimer';
-
-const calculateCompletedMinutes = (sessions: Session[]): number => {
-    const totalMilliseconds = sessions.reduce((total, session) => {
-        // Skip sessions without duration
-        if (!session.duration) return total;
-        
-        // Ensure duration is treated as a number
-        const duration = typeof session.duration === 'string' 
-            ? parseInt(session.duration, 10) 
-            : session.duration;
-            
-        return total + duration;
-    }, 0);
-    
-    // Convert milliseconds to minutes and round down
-    return Math.floor(totalMilliseconds / 60000);
-};
+import { calculateCompletedMinutes } from '../utils/calc';
 
 export default function Main() {
     const dispatch = useDispatch();

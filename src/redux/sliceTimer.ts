@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface Session {
-  duration?: number;
   date: string;
   startTime: string;
+  endTime?: string;
 }
 
 export interface Timer {
@@ -27,10 +27,10 @@ export const timerSlice = createSlice({
   name: "timer",
   initialState,
   reducers: {
-    endSession: (state, action: PayloadAction<{ timerId: number; sessionIndex: number; duration?: number }>) => {
+    endSession: (state, action: PayloadAction<{ timerId: number; sessionIndex: number; endTime?: string }>) => {
       const timer = state.timers.find(t => t.id === action.payload.timerId);
       if (timer && timer.sessions && timer.sessions[action.payload.sessionIndex]) {
-        timer.sessions[action.payload.sessionIndex].duration = action.payload.duration;
+        timer.sessions[action.payload.sessionIndex].endTime = action.payload.endTime;
       }
     },
     addTimer: (state, action: PayloadAction<Timer>) => {

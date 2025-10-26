@@ -5,6 +5,7 @@ import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
 import { Timer, deleteTimer, addSession, endSession, clearSessions } from '../redux/sliceTimer';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { calculateCompletedMinutes } from '../utils/calc';
 
 export default function TimerDetail() {
     const { id } = useParams<{ id: string }>();
@@ -113,7 +114,15 @@ export default function TimerDetail() {
                     <h2 className="text-xl font-bold mb-2">{timer.name}</h2>
                     <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>
                     <p className="text-gray-600">
-                        Completed: {timer.sessions.reduce((total, session) => total + (session.duration || 0), 0)} minutes
+                        Completed: {timer.sessions.reduce((total, session) => {
+                            if (session.endTime) {
+                                const start = new Date(session.startTime).getTime();
+                                const end = new Date(session.endTime).getTime();
+                                const duration = end - start;
+                                return total + Math.floor(duration / 60000);
+                            }
+                            return total;
+                        }, 0)} minutes
                     </p>
                     <p className="text-sm text-gray-400">
                         Created: {new Date(timer.createdAt).toLocaleDateString()}
@@ -132,7 +141,7 @@ export default function TimerDetail() {
                                 key={index} 
                                 className="bg-white rounded-lg shadow p-3 cursor-pointer hover:bg-gray-50"
                                 onClick={() => {
-                                    if (!session.duration) {
+                                    if (!session.endTime) {
                                         setSelectedSessionIndex(index);
                                         setIsEndSessionDialogOpen(true);
                                     }
@@ -141,12 +150,12 @@ export default function TimerDetail() {
                                 <p className="text-gray-600">
                                     Started: {new Date(session.startTime).toLocaleString()}
                                 </p>
-                                {session.duration && (
+                                {session.endTime && (
                                     <p className="text-gray-600">
-                                        Duration: {session.duration} minutes
+                                        Duration: {calculateCompletedMinutes([session])} minutes
                                     </p>
                                 )}
-                                {!session.duration && (
+                                {!session.endTime && (
                                     <p className="text-green-600">
                                         Session in progress
                                     </p>
@@ -231,7 +240,7 @@ export default function TimerDetail() {
                                         dispatch(endSession({
                                             timerId: timer.id,
                                             sessionIndex: selectedSessionIndex,
-                                            duration
+                                            endTime: endDateTime.toISOString()
                                         }));
                                         
                                         setIsEndSessionDialogOpen(false);
@@ -293,7 +302,7 @@ export default function TimerDetail() {
                                             dispatch(endSession({
                                                 timerId: timer.id,
                                                 sessionIndex: selectedSessionIndex,
-                                                duration
+                                                endTime: endDateTime.toISOString()
                                             }));
                                             
                                             setIsEndSessionDialogOpen(false);
