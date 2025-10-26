@@ -3,7 +3,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
-import { Timer } from '../redux/sliceTimer';
+import { Timer, Session } from '../redux/sliceTimer';
+
+const calculateCompletedMinutes = (sessions: Session[]): number => {
+    const totalMilliseconds = sessions.reduce((total, session) => {
+        // Skip sessions without duration
+        if (!session.duration) return total;
+        
+        // Ensure duration is treated as a number
+        const duration = typeof session.duration === 'string' 
+            ? parseInt(session.duration, 10) 
+            : session.duration;
+            
+        return total + duration;
+    }, 0);
+    
+    // Convert milliseconds to minutes and round down
+    return Math.floor(totalMilliseconds / 60000);
+};
 
 export default function Main() {
     const dispatch = useDispatch();
@@ -37,7 +54,13 @@ export default function Main() {
                         >
                             <div>
                                 <h3 className="text-lg font-semibold">{timer.name}</h3>
-                                <p className="text-gray-600">{timer.goalMinutes} minutes</p>
+                                <p className="text-gray-600">
+                                    {(() => {
+                                        const completed = calculateCompletedMinutes(timer.sessions);
+                                        console.log('Timer:', timer.name, 'Sessions:', timer.sessions);
+                                        return `${completed}/${timer.goalMinutes} minutes`;
+                                    })()}
+                                </p>
                             </div>
                             <p className="text-sm text-gray-400">
                                 {new Date(timer.createdAt).toLocaleDateString()}
