@@ -46,15 +46,12 @@ export default function TimerDetail() {
         } else {
             if (!startTime) return;
             
-            // Parse the time string (HH:mm) and combine with today's date
+            // Parse the time string (HH:mm) and combine with today's date only
             const [hours, minutes] = startTime.split(':').map(num => parseInt(num, 10));
             sessionStartTime = new Date();
             sessionStartTime.setHours(hours, minutes, 0, 0);
             
-            // If the time is earlier than now, assume it's for tomorrow
-            if (sessionStartTime < now) {
-                sessionStartTime.setDate(sessionStartTime.getDate() + 1);
-            }
+            // Always use today's date - do not allow future dates
         }
 
         dispatch(addSession({
@@ -236,17 +233,22 @@ export default function TimerDetail() {
                                 </div>
                             </div>
 
-                            <TextField
-                                margin="dense"
-                                label="Start Time"
-                                type="time"
-                                fullWidth
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
+                            <div>
+                                <p className="text-sm text-gray-600 mb-2">
+                                    Select time for today ({new Date().toLocaleDateString()})
+                                </p>
+                                <TextField
+                                    margin="dense"
+                                    label="Start Time"
+                                    type="time"
+                                    fullWidth
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(e.target.value)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            </div>
                             
                             <div className="flex justify-end gap-2 mt-4">
                                 <Button onClick={() => {
@@ -308,17 +310,22 @@ export default function TimerDetail() {
                                 </div>
                             </div>
 
-                            <TextField
-                                margin="dense"
-                                label="End Time"
-                                type="time"
-                                fullWidth
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
+                            <div>
+                                <p className="text-sm text-gray-600 mb-2">
+                                    Select end time for the same day as session start
+                                </p>
+                                <TextField
+                                    margin="dense"
+                                    label="End Time"
+                                    type="time"
+                                    fullWidth
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            </div>
                             
                             <div className="flex justify-end gap-2 mt-4">
                                 <Button onClick={() => {
@@ -333,15 +340,12 @@ export default function TimerDetail() {
                                             const session = timer.sessions[selectedSessionIndex];
                                             const startTime = new Date(session.startTime);
                                             
-                                            // Parse the time string (HH:mm)
+                                            // Parse the time string (HH:mm) and use the same date as start time
                                             const [hours, minutes] = endTime.split(':').map(num => parseInt(num, 10));
-                                            const endDateTime = new Date();
+                                            const endDateTime = new Date(startTime);
                                             endDateTime.setHours(hours, minutes, 0, 0);
                                             
-                                            // If the end time is earlier than start time, assume it's for the next day
-                                            if (endDateTime < startTime) {
-                                                endDateTime.setDate(endDateTime.getDate() + 1);
-                                            }
+                                            // Always use the same date as the start time - no date changes allowed
                                             
                                             // Calculate duration in minutes
                                             const duration = Math.round((endDateTime.getTime() - startTime.getTime()) / (1000 * 60));
