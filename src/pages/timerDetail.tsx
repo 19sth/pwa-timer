@@ -152,7 +152,7 @@ export default function TimerDetail() {
                                     <div className="flex items-center mb-2">
                                         {/* Start dot */}
                                         <div className="flex flex-col items-center">
-                                            <div className={`w-4 h-4 rounded-full ${!session.endTime ? 'animate-pulse' : 'bg-gray-400'}`} style={!session.endTime ? {backgroundColor: '#65a30d'} : {}}></div>
+                                            <div className={`${!session.endTime ? 'w-5 h-5 animate-pulse' : 'w-4 h-4 border-2 border-gray-400'} rounded-full`} style={!session.endTime ? {backgroundColor: '#65a30d'} : {}}></div>
                                             <div className="text-xs text-gray-600 mt-1 font-mono">
                                                 {new Date(session.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false})}
                                             </div>
@@ -161,10 +161,10 @@ export default function TimerDetail() {
                                         {/* Horizontal connecting line */}
                                         {session.endTime && (
                                             <>
-                                                <div className="h-0.5 bg-gray-400 flex-1 mx-2 self-start mt-2"></div>
+                                                <div className="h-0.5 flex-1 mx-2 self-start mt-2" style={{background: 'linear-gradient(to right, #9ca3af, #65a30d)'}}></div>
                                                 {/* End dot */}
                                                 <div className="flex flex-col items-center">
-                                                    <div className="w-4 h-4 rounded-full" style={{backgroundColor: '#65a30d'}}></div>
+                                                    <div className="w-5 h-5 rounded-full" style={{backgroundColor: '#65a30d'}}></div>
                                                     <div className="text-xs text-gray-600 mt-1 font-mono">
                                                         {new Date(session.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false})}
                                                     </div>
@@ -178,7 +178,7 @@ export default function TimerDetail() {
                                                 <div className="h-0.5 flex-1 mx-2 self-start mt-2 animate-pulse" style={{background: 'linear-gradient(to right, #65a30d, #9ca3af)'}}></div>
                                                 {/* End dot for in-progress (gray) */}
                                                 <div className="flex flex-col items-center">
-                                                    <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+                                                    <div className="w-4 h-4 rounded-full border-2 border-gray-400"></div>
                                                     <div className="text-xs text-gray-400 mt-1 font-mono">
                                                         --:--
                                                     </div>
@@ -187,19 +187,22 @@ export default function TimerDetail() {
                                         )}
                                     </div>
                                     
+                                    {/* Duration below timeline */}
+                                    <div className="text-center -mt-5">
+                                        {session.endTime ? (
+                                            <p className="text-sm text-gray-600">
+                                                {calculateCompletedMinutes([session])} minutes
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm animate-pulse" style={{color: '#65a30d'}}>
+                                                {Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000)} minutes
+                                            </p>
+                                        )}
+                                    </div>
+                                    
                                     {/* Session info */}
                                     <div className="flex-1">
-                                        {session.endTime && (
-                                            <p className="text-gray-600 font-medium">
-                                                Duration: {calculateCompletedMinutes([session])} minutes
-                                            </p>
-                                        )}
-                                        {!session.endTime && (
-                                            <p className="font-medium animate-pulse" style={{color: '#65a30d'}}>
-                                                Session in progress
-                                            </p>
-                                        )}
-                                        <p className="text-sm text-gray-400">
+                                        <p className="text-xs text-gray-600 text-center mt-1">
                                             {new Date(session.startTime).toLocaleDateString()}
                                         </p>
                                     </div>
