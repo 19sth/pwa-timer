@@ -14,14 +14,14 @@ const CreateTimer: React.FC = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     
-    if (!timerName.trim() || !goalMinutes) {
+    if (!timerName.trim()) {
       return;
     }
 
     const timer = {
       id: Date.now(),
       name: timerName.trim(),
-      goalMinutes: parseInt(goalMinutes, 10),
+      ...(goalMinutes ? { goalMinutes: parseInt(goalMinutes, 10) } : {}),
       createdAt: new Date().toISOString(),
       sessions: []
     };
@@ -53,7 +53,6 @@ const CreateTimer: React.FC = () => {
           />
           <TextField
             margin="normal"
-            required
             fullWidth
             id="goalMinutes"
             label="Goal (minutes)"

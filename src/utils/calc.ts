@@ -1,5 +1,17 @@
 import { Session } from "../redux/sliceTimer";
 
+export const formatDuration = (minutes: number): string => {
+    if (minutes < 60) return `${minutes}m`;
+    const days = Math.floor(minutes / (60 * 24));
+    const hours = Math.floor((minutes % (60 * 24)) / 60);
+    const mins = minutes % 60;
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (mins > 0) parts.push(`${mins}m`);
+    return parts.join(' ');
+};
+
 export const calculateCompletedMinutes = (sessions: Session[]): number => {
     const totalMilliseconds = sessions.reduce((total, session) => {
         // Skip sessions without duration

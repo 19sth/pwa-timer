@@ -5,7 +5,7 @@ import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
 import { Timer, deleteTimer, addSession, endSession, clearSessions } from '../redux/sliceTimer';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
-import { calculateCompletedMinutes } from '../utils/calc';
+import { calculateCompletedMinutes, formatDuration } from '../utils/calc';
 
 export default function TimerDetail() {
     const { id } = useParams<{ id: string }>();
@@ -109,9 +109,9 @@ export default function TimerDetail() {
             <div className="bg-white rounded-lg shadow p-4 mb-4">
                 <div>
                     <h2 className="text-xl font-bold mb-2">{timer.name}</h2>
-                    <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>
+                    {timer.goalMinutes && <p className="text-gray-600">Goal: {timer.goalMinutes} minutes</p>}
                     <p className="text-gray-600">
-                        Completed: {timer.sessions.reduce((total, session) => {
+                        Completed: {formatDuration(timer.sessions.reduce((total, session) => {
                             if (session.endTime) {
                                 const start = new Date(session.startTime).getTime();
                                 const end = new Date(session.endTime).getTime();
@@ -119,7 +119,7 @@ export default function TimerDetail() {
                                 return total + Math.floor(duration / 60000);
                             }
                             return total;
-                        }, 0)} minutes
+                        }, 0))}
                     </p>
                     <p className="text-sm text-gray-400">
                         Created: {new Date(timer.createdAt).toLocaleDateString()}
@@ -188,11 +188,11 @@ export default function TimerDetail() {
                                     <div className="text-center -mt-5">
                                         {session.endTime ? (
                                             <p className="text-sm text-gray-600">
-                                                {calculateCompletedMinutes([session])} minutes
+                                                {formatDuration(calculateCompletedMinutes([session]))}
                                             </p>
                                         ) : (
                                             <p className="text-sm animate-pulse" style={{color: '#65a30d'}}>
-                                                {Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000)} minutes
+                                                {formatDuration(Math.floor((new Date().getTime() - new Date(session.startTime).getTime()) / 60000))}
                                             </p>
                                         )}
                                     </div>

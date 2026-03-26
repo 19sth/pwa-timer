@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { updatePageState } from '../redux/slicePage';
 import { RootState } from '../redux/store';
 import { Timer, Session } from '../redux/sliceTimer';
-import { calculateCompletedMinutes } from '../utils/calc';
+import { calculateCompletedMinutes, formatDuration } from '../utils/calc';
 
 export default function Main() {
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ export default function Main() {
                                     {(() => {
                                         const completed = calculateCompletedMinutes(timer.sessions);
                                         console.log('Timer:', timer.name, 'Sessions:', timer.sessions);
-                                        return `${completed}/${timer.goalMinutes} minutes`;
+                                        return timer.goalMinutes ? `${formatDuration(completed)}/${formatDuration(timer.goalMinutes)}` : formatDuration(completed);
                                     })()}
                                 </p>
                             </div>

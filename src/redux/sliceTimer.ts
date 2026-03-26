@@ -10,7 +10,7 @@ export interface Session {
 export interface Timer {
   id: number;
   name: string;
-  goalMinutes: number;
+  goalMinutes?: number;
   createdAt: string;
   sessions: Session[];
 }
